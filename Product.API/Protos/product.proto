@@ -1,0 +1,46 @@
+	syntax = "proto3";
+
+	option csharp_namespace = "Product.API";
+
+	service ProductProto {
+	  rpc GetProduct (GetProductRequest) returns (ProductModel);
+	  rpc ListProducts (EmptyRequest) returns (ProductListResponse);
+	  rpc CreateProduct (ProductModel) returns (ProductResponse);
+	  rpc UpdateProduct (ProductModel) returns (ProductResponse);
+	  rpc DeleteProduct (DeleteProductRequest) returns (ProductResponse);
+	}
+
+	message EmptyRequest {
+
+	}
+
+	message GetProductRequest {
+	  int32 productId = 1;
+	}
+
+	message DeleteProductRequest {
+	  int32 productId = 1;
+	}
+
+	message ProductModel {
+	  int32 productId = 1;
+	  string name = 2;
+	  string description = 3;
+	  double price = 4;
+	  string category = 5;
+	  int32 quantityInStock = 6;
+	  string supplier = 7;
+	  double weight = 8;
+	  string dimensions = 9;
+	  bool isAvailable = 10;
+	  string createdAt = 11;
+	  string updatedAt = 12;
+	}
+
+	message ProductListResponse {
+	  repeated ProductModel products = 1;
+	}
+
+	message ProductResponse {
+	  string status = 1;
+	}
