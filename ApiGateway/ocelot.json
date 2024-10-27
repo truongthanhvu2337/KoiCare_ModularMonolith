@@ -24,15 +24,5 @@
       "UpstreamPathTemplate": "/Product/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT" ]
     }
-  ],
-  "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:5294"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*"
+  ]
 }

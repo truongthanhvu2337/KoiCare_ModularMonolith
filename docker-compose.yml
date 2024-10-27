@@ -1,0 +1,33 @@
+﻿version: '3.4'
+
+services:
+  orderservice:
+    build:
+      context: ./Order.API 
+    ports:
+      - "5294:80" 
+    networks:
+      - app-network
+
+  productservice:
+    build:
+     context: ./Product.API 
+    ports:
+      - "5295:80" 
+    networks:
+      - app-network
+
+  apigateway:
+    build:
+      context: ./ApiGateway
+    ports:
+      - "5000:80"  
+    networks:
+      - app-network
+    depends_on:
+      - orderservice
+      - productservice
+
+networks:
+  app-network:
+    driver: bridge
