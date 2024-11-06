@@ -1,33 +1,54 @@
-﻿version: '3.4'
+version: '3.4'
 
 services:
-  orderservice:
+   order.api:
+    image: ${DOCKER_REGISTRY-}orderapi
     build:
-      context: ./Order.API 
-    ports:
-      - "5294:80" 
+      context: .
+      dockerfile: Order.API/Dockerfile
     networks:
-      - app-network
+     - app-network
 
-  productservice:
+   product.api:
+    image: ${DOCKER_REGISTRY-}productapi
     build:
-     context: ./Product.API 
-    ports:
-      - "5295:80" 
+      context: .
+      dockerfile: Product.API/Dockerfile
     networks:
-      - app-network
+     - app-network
 
-  apigateway:
-    build:
-      context: ./ApiGateway
-    ports:
-      - "5000:80"  
-    networks:
+   apigateway:
+      image: ${DOCKER_REGISTRY-}apigateway
+      build:
+        context: .
+        dockerfile: ApiGateway/Dockerfile
+      networks:
+       - app-network
+   
+   rabbitmq:
+     image: rabbitmq:3-management
+     container_name: rabbitmq
+     ports:
+      - "5672:5672"       
+      - "15672:15672"     
+     environment:
+      - RABBITMQ_DEFAULT_USER=sa
+      - RABBITMQ_DEFAULT_PASS=sa
+     volumes:
+      - ./.container/queue/data/:/var/lib/rabbitmq
+      - ./.container/queue/log/:/var/log/rabbitmq
+     networks:
       - app-network
-    depends_on:
-      - orderservice
-      - productservice
 
 networks:
   app-network:
     driver: bridge
+
+  
+
+
+  
+
+
+  
+

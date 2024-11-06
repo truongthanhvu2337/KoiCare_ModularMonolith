@@ -4,10 +4,6 @@
 
 	service ProductProto {
 	  rpc GetProduct (GetProductRequest) returns (ProductModel);
-	  rpc ListProducts (EmptyRequest) returns (ProductListResponse);
-	  rpc CreateProduct (ProductModel) returns (ProductResponse);
-	  rpc UpdateProduct (ProductModel) returns (ProductResponse);
-	  rpc DeleteProduct (DeleteProductRequest) returns (ProductResponse);
 	}
 
 	message EmptyRequest {
@@ -18,9 +14,6 @@
 	  int32 productId = 1;
 	}
 
-	message DeleteProductRequest {
-	  int32 productId = 1;
-	}
 
 	message ProductModel {
 	  int32 productId = 1;

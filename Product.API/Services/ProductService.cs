@@ -1,115 +1,51 @@
-﻿using Grpc.Core;
-using Product.API;
-using Product.API.Validation;
+﻿namespace Product.API.Services;
 
-namespace Product.API.Services;
-
-public class ProductService : ProductProto.ProductProtoBase
+public class ProductService 
 {
 
-    private static readonly List<ProductModel> _products = new List<ProductModel>
+    private static readonly List<Models.Product> _products = new List<Models.Product>
     {
-        new ProductModel
+        new Models.Product
         {
-            ProductId = 2,
+            ProductID = 2,
             Name = "Bình lọc nước cá Koi",
             Description = "Bình lọc nước hiệu quả, giúp giữ cho hồ cá luôn sạch sẽ.",
-            Price = 150.00,
+            Price = 150.00M,
             Category = "Thiết bị",
             QuantityInStock = 20,
             Supplier = "AquaTech",
-            Weight = 10.0,
+            Weight = 10.0M,
             Dimensions = "50 x 30 x 30 cm",
             IsAvailable = true,
-            CreatedAt = DateTime.Now.AddDays(-4).ToString("yyyy-MM-dd"),
-            UpdatedAt = DateTime.Now.AddDays(-4).ToString("yyyy-MM-dd")
+            CreatedAt = DateTime.Now.AddDays(-4),
+            UpdatedAt = DateTime.Now.AddDays(-4)
         },
-        new ProductModel
+        new Models.Product
         {
-            ProductId = 3,
+            ProductID = 3,
             Name = "Sát trùng hồ cá Koi",
             Description = "Chất sát trùng an toàn cho cá, giúp phòng ngừa bệnh tật.",
-            Price = 18.00,
+            Price = 18.00M,
             Category = "Chăm sóc",
             QuantityInStock = 50,
             Supplier = "Koi Health",
-            Weight = 0.5,
+            Weight = 0.5M,
             Dimensions = "10 x 10 x 5 cm",
             IsAvailable = true,
-            CreatedAt = DateTime.Now.AddDays(-3).ToString("yyyy-MM-dd"),
-            UpdatedAt = DateTime.Now.AddDays(-3).ToString("yyyy-MM-dd")
+            CreatedAt = DateTime.Now.AddDays(-3),
+            UpdatedAt = DateTime.Now.AddDays(-3)
         }
     };
 
-    public override Task<ProductModel> GetProduct(GetProductRequest request, ServerCallContext context)
+
+    public Models.Product GetProductById(int productId)
     {
-        var product = _products.Find(p => p.ProductId == request.ProductId);
-        if (product == null)
-        {
-            throw new RpcException(new Status(StatusCode.NotFound, "Product not found"));
-        }
-        return Task.FromResult(product);
+        return _products.Find(p => p.ProductID == productId);
     }
 
-    public override Task<ProductListResponse> ListProducts(EmptyRequest request, ServerCallContext context)
+    public IEnumerable<Models.Product> GetAllProduct()
     {
-        var response = new ProductListResponse();
-        response.Products.AddRange(_products);
-        return Task.FromResult(response);
+        return _products.ToList();
     }
 
-    // Create New Product
-    public override Task<ProductResponse> CreateProduct(ProductModel request, ServerCallContext context)
-    {
-        var validator = new ProductModelValidator();
-        var validationResult = validator.Validate(request);
-
-        if (!validationResult.IsValid)
-        {
-            var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
-            throw new RpcException(new Status(StatusCode.InvalidArgument, $"Validation failed: {errors}"));
-        }
-        request.ProductId = _products.Max(a => a.ProductId) + 1;
-        request.CreatedAt = DateTime.Now.ToString("yyyy-MM-dd");
-        request.UpdatedAt = DateTime.Now.ToString("yyyy-MM-dd");
-        _products.Add(request);
-
-        return Task.FromResult(new ProductResponse { Status = "Product created successfully" });
-    }
-
-    // Update Existing Product
-    public override Task<ProductResponse> UpdateProduct(ProductModel request, ServerCallContext context)
-    {
-        var product = _products.Find(p => p.ProductId == request.ProductId);
-        if (product == null)
-        {
-            throw new RpcException(new Status(StatusCode.NotFound, "Product not found"));
-        }
-
-        product.Name = request.Name;
-        product.Description = request.Description;
-        product.Price = request.Price;
-        product.Category = request.Category;
-        product.QuantityInStock = request.QuantityInStock;
-        product.Supplier = request.Supplier;
-        product.Weight = request.Weight;
-        product.Dimensions = request.Dimensions;
-        product.IsAvailable = request.IsAvailable;
-        product.UpdatedAt = DateTime.Now.ToString("yyyy-MM-dd");
-
-        return Task.FromResult(new ProductResponse { Status = "Product updated successfully" });
-    }
-
-    // Delete Product by ID
-    public override Task<ProductResponse> DeleteProduct(DeleteProductRequest request, ServerCallContext context)
-    {
-        var product = _products.Find(p => p.ProductId == request.ProductId);
-        if (product == null)
-        {
-            throw new RpcException(new Status(StatusCode.NotFound, "Product not found"));
-        }
-
-        _products.Remove(product);
-        return Task.FromResult(new ProductResponse { Status = "Product deleted successfully" });
-    }
 }
